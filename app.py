@@ -21,7 +21,11 @@ def authenticate():
                 'error': 'Invalid username/password pair'
             }
         if checked:
-            encoded_jwt = jwt.encode({'username': username}, secret, algorithm='HS256')
+            role = redis_client.hget(username, 'role')
+            encoded_jwt = jwt.encode({
+                'username': username,
+                'role': role if role else None
+            }, secret, algorithm='HS256')
             return {
                 'ok': True,
                 'jwt': encoded_jwt.decode('UTF-8')
@@ -35,6 +39,7 @@ def authenticate():
 def register():
     username = request.form['username']
     password = request.form['password']
+    role = request.get('role')
     if redis_client.hgetall(username):
         return {
             'ok': False,
@@ -43,6 +48,8 @@ def register():
     else:
         password_hash = bcrypt.hashpw(password.encode('UTF-8'), bcrypt.gensalt())
         redis_client.hset(username, 'password', password_hash)
+        if role:
+            redis_client.hset(username, 'role', role)
         return {
             'ok': True
         }
