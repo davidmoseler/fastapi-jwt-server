@@ -24,7 +24,7 @@ def authenticate():
             role = redis_client.hget(username, 'role')
             encoded_jwt = jwt.encode({
                 'username': username,
-                'role': role if role else None
+                'role': role.decode('UTF-8') if role else None
             }, secret, algorithm='HS256')
             return {
                 'ok': True,
