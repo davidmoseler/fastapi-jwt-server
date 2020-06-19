@@ -39,7 +39,7 @@ def authenticate():
 def register():
     username = request.form['username']
     password = request.form['password']
-    role = request.get('role')
+    role = request.form.get('role')
     if redis_client.hgetall(username):
         return {
             'ok': False,
