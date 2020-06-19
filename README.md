@@ -1,2 +1,2 @@
 # flask-jwt-server
-Bare bones jwt server in Flask for use with other open source projects
+Bare bones jwt server built with Flask and Redis for use with other open source projects
