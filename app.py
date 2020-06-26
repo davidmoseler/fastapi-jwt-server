@@ -70,8 +70,7 @@ async def delete(user: User):
         if checked:
             redis_client.delete(user.username)
             return {
-                'ok': True,
-                'jwt': encoded_jwt.decode('UTF-8')
+                'ok': True
             }
     return {
         'ok': False,
