@@ -44,7 +44,7 @@ async def authenticate(user: User):
 
 @app.post('/register')
 async def register(user: NewUser):
-    if redis_client.hgetall(username):
+    if redis_client.hgetall(user.username):
         return {
             'ok': False,
             'error': 'Username already registered'
@@ -52,7 +52,7 @@ async def register(user: NewUser):
     else:
         password_hash = bcrypt.hashpw(user.password.encode('UTF-8'), bcrypt.gensalt())
         redis_client.hset(user.username, 'password', password_hash)
-        if role:
+        if user.role:
             redis_client.hset(user.username, 'role', user.role)
         return {
             'ok': True
