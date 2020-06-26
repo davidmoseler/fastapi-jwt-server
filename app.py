@@ -18,7 +18,6 @@ class NewUser(User):
 
 @app.post('/authenticate')
 async def authenticate(user: User):
-    print(user)
     if redis_client.hgetall(user.username):
         try:
             checked = bcrypt.checkpw(user.password.encode('UTF-8'), redis_client.hget(user.username, 'password'))
@@ -57,3 +56,26 @@ async def register(user: NewUser):
         return {
             'ok': True
         }
+
+@app.post('/delete')
+async def delete(user: User):
+    if redis_client.hgetall(user.username):
+        try:
+            checked = bcrypt.checkpw(user.password.encode('UTF-8'), redis_client.hget(user.username, 'password'))
+        except ValueError:
+            return {
+                'ok': False,
+                'error': 'Invalid username/password pair'
+            }
+        if checked:
+            redis_client.delete(user.username)
+            return {
+                'ok': True,
+                'jwt': encoded_jwt.decode('UTF-8')
+            }
+    return {
+        'ok': False,
+        'error': 'Invalid username/password pair'
+    }
+
+
