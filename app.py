@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import jwt
 import os
 import redis
@@ -8,6 +9,13 @@ from pydantic import BaseModel
 app = FastAPI()
 secret = os.environ.get('SECRET_KEY')
 redis_client = redis.Redis.from_url(os.environ.get('REDIS_URL'))
+
+app.add_middleware(
+        CORSMiddleware,
+        allow_origins = ['*'],
+        allow_methods = ['*'],
+        allow_headers = ['*']
+    )
 
 class User(BaseModel):
     username: str
